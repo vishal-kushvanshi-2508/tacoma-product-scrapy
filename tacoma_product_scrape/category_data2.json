@@ -1,0 +1,48 @@
+{
+    "uri": "https://www.tacomascrew.com/api/v1/products",
+    "pagination": {
+        "currentPage": 1,
+        "page": 1,
+        "pageSize": 24,
+        "defaultPageSize": 8,
+        "totalItemCount": 0,
+        "numberOfPages": 0,
+        "pageSizeOptions": [
+            24,
+            48,
+            96
+        ],
+        "sortOptions": [
+            {
+                "displayName": "Relevance",
+                "sortType": "score"
+            },
+            {
+                "displayName": "Product Number A - Z",
+                "sortType": "erpnumberasc"
+            },
+            {
+                "displayName": "Product Number Z - A",
+                "sortType": "erpnumberdesc"
+            }
+        ],
+        "sortType": "score",
+        "nextPageUri": null,
+        "prevPageUri": null
+    },
+    "products": [],
+    "categoryFacets": [],
+    "attributeTypeFacets": [],
+    "brandFacets": [],
+    "productLineFacets": [],
+    "didYouMeanSuggestions": [],
+    "exactMatch": false,
+    "notAllProductsFound": false,
+    "notAllProductsAllowed": false,
+    "originalQuery": null,
+    "correctedQuery": null,
+    "searchTermRedirectUrl": null,
+    "properties": {
+        "collapseFiltersByDefault": "False"
+    }
+}
