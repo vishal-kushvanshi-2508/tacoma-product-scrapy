@@ -8,7 +8,9 @@ import scrapy
 
 class TacomaProductScrapeItem(scrapy.Item):
     # define the fields for your item here like:
+    category_name = scrapy.Field()
+    sub_category_name = scrapy.Field()
+    
     product_id = scrapy.Field()
     product_name = scrapy.Field()
     product_url = scrapy.Field()
-    # pass

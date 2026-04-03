@@ -18,16 +18,21 @@ class TacomaSpiderSpider(scrapy.Spider):
         # new_url = base_url + "/Catalog/abrasives"
         base_url = response.url.strip("/").rsplit("/", 1)[0]
         base_api_url = r"https://www.tacomascrew.com/api/v1/catalogpages?path=%2FCatalog%2F"
+        print("base_url ", base_url)
+        
         print("base_url ", base_api_url)
         for category_data in all_category:
-            category_name = category_data.xpath("//a//p/text()").get().strip()
-            category_name_lower = category_name.lower().replace(" ", "-")
+            category_name = category_data.xpath(".//a//p/text()").get().strip()
+            category_name_lower = category_name.lower().replace(" / ", "-")  #.replace("/","")
             # category_url = base_url + category_data.xpath("//a[@class='product-title']/@href").get()
             # url =  response.
 
             category_api_url = base_api_url + category_name_lower
-            print("done data", category_name, category_name_lower)
-            print(category_api_url)
+            print("first now done data", category_name, category_name_lower)
+            print("2 now done data : ", category_api_url)
+            # if category_name == "Abrasives":
+            #     print("this Abrasives")
+            #     continue
 
             yield scrapy.Request(
                 url=category_api_url,
@@ -39,8 +44,8 @@ class TacomaSpiderSpider(scrapy.Spider):
                     "category_api_url" : category_api_url
                 }
             )
-            break
-        print("done data")
+            # break
+        # print("done data")
 
 
     def sub_category(self, response):
@@ -67,22 +72,27 @@ class TacomaSpiderSpider(scrapy.Spider):
         print(len(sub_category_list))
         # sub_category_base_api = f"https://www.tacomascrew.com/api/v1/products/?applyPersonalization=true&categoryId={sub_category_id}abfa01121e6d&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
         
-        start_api = r"https://www.tacomascrew.com/api/v1/products/?applyPersonalization=true&categoryId="
-        end_api = r"abfa01121e6d&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
+        # start_api = r"https://www.tacomascrew.com/api/v1/products/?applyPersonalization=true&categoryId="
+        # # end_api = r"abfa01121e6d&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
+        # end_api = r"abfa01121e6d&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
+        
         for dict_data in sub_category_list:
-            sub_category_id = dict_data.get("id")[0:24]
+            start_api = r"https://www.tacomascrew.com/api/v1/products/?applyPersonalization=true&categoryId="
+            end_api = r"&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
+
+            sub_category_id = dict_data.get("id")
             sub_category_name = dict_data.get("name")
-            print("sub_category_name : ", sub_category_id)
+            # print("sub_category_name : ", sub_category_id)
             
 
-            # change heree delete it ..
-            sub_category_id = "3bf5ce4e-5e60-474d-aa47-"
+            # # change heree delete it ..
+            # sub_category_id = "3bf5ce4e-5e60-474d-aa47-"
 
-            print("sub_category_name : ", sub_category_name)
+            # print("sub_category_name : ", sub_category_name)
 
 
             sub_category_base_api = start_api + sub_category_id + end_api
-            print(sub_category_base_api)
+            # print(sub_category_base_api)
 
             yield scrapy.Request(
                 url=sub_category_base_api,
@@ -95,7 +105,7 @@ class TacomaSpiderSpider(scrapy.Spider):
                     "category_api_url" : category_api_url
                 }
             )
-            break
+            # break
 
     def product_or_sub_category(self, response):
         print("------third------")
@@ -111,8 +121,8 @@ class TacomaSpiderSpider(scrapy.Spider):
         sub_category_name = response.meta.get("sub_category_name")
         category_api_url = response.meta.get("category_api_url")
 
-        print("product_or_sub_category base url : ", base_url)
-        print("2 product_or_sub_category base url : ",sub_category_name.lower().replace(" ", "-"),  category_api_url)
+        # print("product_or_sub_category base url : ", base_url)
+        # print("2 product_or_sub_category base url : ",sub_category_name.lower().replace(" ", "-"),  category_api_url)
         sub_category_data = response.json()
             
         with open("category_data2.json", "w", encoding="utf-8") as f:
@@ -122,15 +132,19 @@ class TacomaSpiderSpider(scrapy.Spider):
             product_data_list = sub_category_data.get("products")
             for dict_data in product_data_list:
                 product_id = dict_data.get("id")
-                print(product_id )
+                # print(product_id )
                
                 product_name = dict_data.get("shortDescription")
-                print(product_name )
+                # print(product_name )
 
                 product_url = base_url + dict_data.get("productDetailUrl")
-                print(product_url )
+                # print(product_url )
 
                 items = TacomaProductScrapeItem()  
+                items["category_name"] = category_name
+
+                items["sub_category_name"] = sub_category_name
+
                 items["product_id"] = product_id
                 # print(product_id )
                
@@ -141,10 +155,10 @@ class TacomaSpiderSpider(scrapy.Spider):
                 # print(product_url )
                 yield items
 
-                break
+                # break
 
-            print(items)
-            print(len(items))
+            # print(items)
+            # print(len(items))
 
 
 
@@ -156,14 +170,14 @@ class TacomaSpiderSpider(scrapy.Spider):
             print("yes subCategories")
             sub_category_name_lower  = sub_category_name.lower().replace(" ", "-")
             child_category_api_url = category_api_url + r"%2F" + sub_category_name_lower
-            print("child_category_api_url url : ", child_category_api_url)
+            # print("child_category_api_url url : ", child_category_api_url)
 
 
             ## checking url 
-            check_url = r"https://www.tacomascrew.com/api/v1/catalogpages?path=%2FCatalog%2Fabrasives%2Fcut-off-wheels"
-            print("inside inside for check : ", check_url)
+            # check_url = r"https://www.tacomascrew.com/api/v1/catalogpages?path=%2FCatalog%2Fabrasives%2Fcut-off-wheels"
+            # print("inside inside for check : ", check_url)
             yield scrapy.Request(
-                url=check_url,
+                url=child_category_api_url,
                 callback=self.child_sub_category,
                 meta={
                     "category_name" : category_name,
@@ -194,15 +208,17 @@ class TacomaSpiderSpider(scrapy.Spider):
 
         sub_category_list = data.get("category").get("subCategories") #category.  category.subCategories
         # print(sub_category_list)
-        print(len(sub_category_list))
+        # print(len(sub_category_list))
         # sub_category_base_api = f"https://www.tacomascrew.com/api/v1/products/?applyPersonalization=true&categoryId={sub_category_id}abfa01121e6d&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
         
-        start_api = r"https://www.tacomascrew.com/api/v1/products/?applyPersonalization=true&categoryId="
-        end_api = r"&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
+        # start_api = r"https://www.tacomascrew.com/api/v1/products/?applyPersonalization=true&categoryId="
+        # end_api = r"&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
         for dict_data in sub_category_list:
-            sub_category_id = dict_data.get("id")
-            sub_category_name = dict_data.get("name")
-            print("then sub_category_name : ", sub_category_id)
+            start_api = r"https://www.tacomascrew.com/api/v1/products/?applyPersonalization=true&categoryId="
+            end_api = r"&expand=pricing,attributes,facets,brand&getAllAttributeFacets=true&includeAlternateInventory=true&includeAttributes=IncludeOnProduct&includeSuggestions=true&makeBrandUrls=false&previouslyPurchasedProducts=false&searchWithin=&stockedItemsOnly=false"
+            child_sub_category_id = dict_data.get("id")
+            child_sub_category_name = dict_data.get("name")
+            # print("then sub_category_name : ", child_sub_category_id)
             
 
             # # change heree delete it ..________check now _________
@@ -211,11 +227,11 @@ class TacomaSpiderSpider(scrapy.Spider):
             
             # sub_category_id = "3bf5ce4e-5e60-474d-aa47-"
 
-            print("sub_category_name : ", sub_category_name)
+            # print("sub_category_name : ", sub_category_name)
 
 
-            sub_category_base_api = start_api + sub_category_id + end_api
-            print(sub_category_base_api)
+            sub_category_base_api = start_api + child_sub_category_id + end_api
+            print("sub_category_name : ",sub_category_base_api)
 
             yield scrapy.Request(
                 url=sub_category_base_api,
@@ -225,10 +241,13 @@ class TacomaSpiderSpider(scrapy.Spider):
                     "base_api_url" : base_api_url,
                     "base_url" : base_url,
                     "sub_category_name" : sub_category_name,
-                    "category_api_url" : category_api_url
+                    "category_api_url" : category_api_url,
+                    "child_sub_category_id" : child_sub_category_id,
+                    "child_sub_category_name" : child_sub_category_name
+
                 }
             )
-            break
+            # break
 
     def child_product_or_sub_category(self, response):
         print("------fifth------")
@@ -243,29 +262,39 @@ class TacomaSpiderSpider(scrapy.Spider):
         base_url = response.meta.get("base_url")
         sub_category_name = response.meta.get("sub_category_name")
         category_api_url = response.meta.get("category_api_url")
+        child_sub_category_id = response.meta.get("child_sub_category_id")
+        child_sub_category_name = response.meta.get("child_sub_category_name")
 
-        print("product_or_sub_category base url : ", base_url)
-        print("2 product_or_sub_category base url : ",sub_category_name.lower().replace(" ", "-"),  category_api_url)
-        sub_category_data = response.json()
+        # print("product_or_sub_category base url : ", base_url)
+        # print("2 product_or_sub_category base url : ",child_sub_category_name.lower().replace(" ", "-"),  category_api_url)
+        child_sub_category_data = response.json()
             
         with open("category_data4.json", "w", encoding="utf-8") as f:
-            json.dump(sub_category_data, f, indent=4)   # ✅ correct way
-        if sub_category_data.get("products"):
-            print("yes products")
-            product_data_list = sub_category_data.get("products")
+            json.dump(child_sub_category_data, f, indent=4)   # ✅ correct way
+        if child_sub_category_data.get("products"):
+            print("INSIDE child yes products")
+            product_data_list = child_sub_category_data.get("products")
             for dict_data in product_data_list:
                 items = TacomaProductScrapeItem()  
+                items["category_name"] = category_name
+
+                items["sub_category_name"] = sub_category_name
+
+
+                product_id = dict_data.get("id")
                 items["product_id"] = dict_data.get("id")
                 # print(product_id )
                
-                items["product_name"] = dict_data.get("shortDescription")
+                product_name = child_sub_category_name + "/" +  dict_data.get("shortDescription")
+                items["product_name"] = child_sub_category_name + "/" + dict_data.get("shortDescription")
                 # print(product_name )
 
+                product_url = base_url + dict_data.get("productDetailUrl") 
                 items["product_url"] = base_url + dict_data.get("productDetailUrl")
                 # print(product_url )
                 yield items
-            print(items)
-            print(len(items))
+            # print(items)
+            # print(len(items))
 
 
 
@@ -274,36 +303,4 @@ class TacomaSpiderSpider(scrapy.Spider):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-        # if response.status_code == 200:
-        #     pass
-        # else:
-        #     print(f"Request failed: {response.status_code}")
-        # break
-
-
-
-
-
-
-
-
-            # print("sub_category_name : ", sub_category_base_api)
-
-
-        # print(category_name, "\nbaseurl : ", base_url )
-        # all_sub_category = now_response.xpath("//div[@ng-repeat='subCategory in vm.category.subCategories']")
-        # print(all_sub_category)
-        # print("all sub ; ", len(all_sub_category))
 

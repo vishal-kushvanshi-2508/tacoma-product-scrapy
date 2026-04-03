@@ -37,7 +37,7 @@ Thumbs.db
 # Scraping data
 # ----------------------
 *.html
-# *.json
+*.json
 test
 
 # Ignore specific file
