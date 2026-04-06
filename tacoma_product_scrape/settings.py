@@ -96,3 +96,13 @@ FEED_EXPORT_ENCODING = "utf-8"
 ITEM_PIPELINES = {
    'tacoma_product_scrape.pipelines.TacomaProductScrapePipeline': 300,
 }
+
+
+
+
+# LOG_FILE = "logs/product_detail.log"
+# LOG_LEVEL = "DEBUG"
+# LOG_ENCODING = "utf-8"
+
+# LOG_FORMAT = "%(asctime)s [%(name)s] %(levelname)s: %(message)s"
+# LOG_DATEFORMAT = "%Y-%m-%d %H:%M:%S"
