@@ -38,7 +38,9 @@ Thumbs.db
 # ----------------------
 *.html
 *.json
-test
+*.log
+
+# test
 
 # Ignore specific file
 #burge_King.html

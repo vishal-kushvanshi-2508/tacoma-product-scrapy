@@ -9,11 +9,21 @@ import scrapy
 class TacomaProductScrapeItem(scrapy.Item):
     # define the fields for your item here like:
     type = scrapy.Field()
-    category_name = scrapy.Field()
-    sub_category_id = scrapy.Field()
-    sub_category_name = scrapy.Field()
+    p_id = scrapy.Field()
+    name = scrapy.Field()
     
-    product_id = scrapy.Field()
-    product_name = scrapy.Field()
+    url = scrapy.Field()
+    
+    img_url = scrapy.Field()
+    price = scrapy.Field()
+    price_value = scrapy.Field()
+    description = scrapy.Field()
     product_url = scrapy.Field()
+ 
+    shipping_weight = scrapy.Field()
+    
+    
+    stock_qty = scrapy.Field()
+    specification = scrapy.Field()
+
     status = scrapy.Field()

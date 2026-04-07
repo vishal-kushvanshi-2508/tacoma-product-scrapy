@@ -88,14 +88,15 @@ class TacomaProductScrapePipeline:
             self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS product_info (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                product_id VARCHAR(255),
-                product_name VARCHAR(255),
+                p_id VARCHAR(255),
+                name VARCHAR(255),
                 url TEXT,
                 img_url TEXT,
                 price VARCHAR(255),
+                price_value  VARCHAR(255),
                 description TEXT,
                 shipping_weight VARCHAR(255),
-                in_stock VARCHAR(255),
+                stock_qty VARCHAR(255),
                 specification TEXT
             )
             """)
@@ -194,22 +195,24 @@ class TacomaProductScrapePipeline:
 
         elif item.get("type") == "product_info":
             query = """
-            INSERT INTO product_info (product_id, product_name, url, img_url, price, description, shipping_weight, in_stock, specification)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s )
+            INSERT INTO product_info (p_id, name, url, img_url, price, price_value, description, shipping_weight, stock_qty, specification)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
             
             """
 
             values = (
-                item.get("product_id"),
-                item.get("product_name"),
+                item.get("p_id"),
+                item.get("name"),
                 item.get("url"),
                 item.get("img_url"),
                 item.get("price"),
+                item.get("price_value"),
                 item.get("description"),
                 item.get("shipping_weight"),
-                item.get("in_stock"),
+                item.get("stock_qty"),
                 item.get("specification")
             )
+                
 
             self.cursor.execute(query, values)
             self.conn.commit()
